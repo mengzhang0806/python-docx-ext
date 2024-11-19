@@ -8,3 +8,19 @@
 _scratch/
 Session.vim
 /.tox/
+.DS_Store
+git.properties
+*.userlibraries
+*.log
+*dump.rdb
+
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm.
+*.iml
+*.eml
+
+# Directory-based project format.
+.idea/
+
+# File-based project format
+*.ipr
+*.iws
