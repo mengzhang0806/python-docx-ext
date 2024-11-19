@@ -87,6 +87,26 @@ class Document(ElementProxy):
         run = self.add_paragraph().add_run()
         return run.add_picture(image_path_or_stream, width, height)
 
+    def add_chart(
+        self,
+        chart_type,
+        x,
+        y,
+        cx,
+        cy,
+        chart_data
+    ):
+        """Add a new chart of *chart_type* to the doc, positioned at (*x*, *y*),
+        having size (*cx*, *cy*), and depicting *chart_data*.*chart_type*
+        is one of the :ref:`XlChartType` enumeration values. *chart_data* is a |ChartData|
+        object populated with the categories and series values for the chart.
+        Note that a |GraphicFrame| shape object is returned, not the |Chart| object contained
+        in that graphic frame shape. The chart object may be accessed using the :attr:`chart`
+        property of the returned |GraphicFrame| object.
+        """
+        run = self.add_paragraph().add_run()
+        return run.add_chart(chart_type, x, y, cx, cy, chart_data)
+
     def add_section(self, start_type: WD_SECTION = WD_SECTION.NEW_PAGE):
         """Return a |Section| object newly added at the end of the document.
 

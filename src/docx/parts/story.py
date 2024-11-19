@@ -9,6 +9,8 @@ from docx.opc.part import XmlPart
 from docx.oxml.shape import CT_Inline
 from docx.shared import Length, lazyproperty
 
+from pptx.parts.chart import ChartPart
+
 if TYPE_CHECKING:
     from docx.enum.style import WD_STYLE_TYPE
     from docx.image.image import Image
@@ -37,6 +39,16 @@ class StoryPart(XmlPart):
         image_part = package.get_or_add_image_part(image_descriptor)
         rId = self.relate_to(image_part, RT.IMAGE)
         return rId, image_part.image
+
+    def get_or_add_chart(self, chart_type, x, y, cx, cy, chart_data):
+        """Return an (rId, chart) 2-tuple for the chart.
+        Access the chart properties like description in python-pptx documents.
+        """
+        package = self._package
+        assert package is not None
+        chart_part = ChartPart.new(chart_type, chart_data, package)
+        rId = self.relate_to(chart_part, RT.CHART)
+        return rId, chart_part.chart
 
     def get_style(self, style_id: str | None, style_type: WD_STYLE_TYPE) -> BaseStyle:
         """Return the style in this document matching `style_id`.
@@ -72,6 +84,14 @@ class StoryPart(XmlPart):
         cx, cy = image.scaled_dimensions(width, height)
         shape_id, filename = self.next_id, image.filename
         return CT_Inline.new_pic_inline(shape_id, rId, filename, cx, cy)
+
+    def new_chart_inline(self, chart_type, x, y, cx, cy, chart_data):
+        """Return a newly-created `w:inline` element containing the chart
+        with position *x* and *y* and width *cx* and height *y*
+        """
+        rId, chart = self.get_or_add_chart(chart_type, x, y, cx, cy, chart_data)
+        shape_id = self.next_id
+        return CT_Inline.new_chart_inline(shape_id, rId, x, y, cx, cy), chart
 
     @property
     def next_id(self) -> int:
